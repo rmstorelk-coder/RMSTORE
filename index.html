@@ -188,7 +188,7 @@
       </div>
     </div>
 
-    <input id="searchInput" class="search-box" type="text" oninput="renderProducts()" placeholder="Search mobiles, display parts, cables, fashion, food..." />
+    <input id="searchInput" class="search-box" type="text" oninput="renderProducts()" placeholder="Search mobiles, accessories, display parts, fashion..." />
 
     <div style="display:flex; gap:8px; align-items:center;">
       <a href="tel:0775496969" class="btn btn-dark" style="border:1px solid #334155; color:#38bdf8;">📞 0775496969</a>
@@ -233,7 +233,7 @@
           <span class="hero-tag">RAASITH MOBILE SPECIAL • NOV 21 & 22</span>
           <h2>Display Change Pannravangalukku High Quality Cable & Tempered FREE!</h2>
           <p style="font-size:13px; color:#e2e8f0; margin-bottom:12px;">
-            Mobiles, Mobile Repairing Parts, Electronic Parts, Fashion, Groceries, Food & Tools across Akkaraipattu.
+            Mobiles, Mobile Accessories, Mobile Repairing Parts, Electronic Parts, Fashion, Groceries, Food & Tools across Akkaraipattu.
           </p>
           <div style="display:flex; flex-wrap:wrap; gap:8px;">
             <a href="https://wa.me/94775496969?text=Hello%20Raasith%20Mobile%20/%20RM%20STORE,%20I%20want%20to%20book%20the%20Nov%2021-22%20Display%20Offer!" target="_blank" class="btn btn-green">Book via WhatsApp (0775496969)</a>
@@ -304,6 +304,7 @@
               <label>Category *</label>
               <select id="pCat">
                 <option>Mobiles</option>
+                <option>Mobile Accessories</option>
                 <option>Mobile Repairing Parts</option>
                 <option>Electronic Parts</option>
                 <option>Fashion</option>
@@ -424,7 +425,6 @@
   </div>
 
   <script>
-    // Supabase Configuration (JWT Anon Public Key)
     const SUPABASE_URL = 'https://xsyxqixpynffwlyjsbrp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzeXhxaXhweW5mZndseWpzYnJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNDUyNTUsImV4cCI6MjExMDcyMTI1NX0.EKY4cqOsSDehWfNbFMDg8Y8wFrJi_aosA58jCvEEaDE';
 
@@ -435,11 +435,11 @@
       'Prefer': 'return=representation'
     };
 
-    const CATS = ['All', 'Mobiles', 'Mobile Repairing Parts', 'Electronic Parts', 'Fashion', 'Groceries', 'Food', 'Tools'];
+    const CATS = ['All', 'Mobiles', 'Mobile Accessories', 'Mobile Repairing Parts', 'Electronic Parts', 'Fashion', 'Groceries', 'Food', 'Tools'];
     const SAMPLE_ITEMS = [
       { id: 'rm_sample_1', name: 'Display Change + Free Cable & Tempered', price: 11500, category: 'Mobile Repairing Parts', shop: 'Raasith Mobile', emoji: '📱', image: '', description: 'Nov 21-22 Weekend Offer at Raasith Mobile, Akkaraipattu. Free High Quality Cable & Tempered Glass.' },
       { id: 'rm_sample_2', name: 'Samsung Galaxy A55 5G (8GB/256GB)', price: 118500, category: 'Mobiles', shop: 'Raasith Mobile', emoji: '📲', image: '', description: 'Brand new sealed pack with 1 year company warranty.' },
-      { id: 'rm_sample_3', name: '65W Braided Fast Charging Cable', price: 1250, category: 'Electronic Parts', shop: 'Raasith Mobile', emoji: '🔌', image: '', description: 'Durable high-speed Type-C charging and data cable.' },
+      { id: 'rm_sample_3', name: '65W Braided Fast Charging Cable', price: 1250, category: 'Mobile Accessories', shop: 'Raasith Mobile', emoji: '🔌', image: '', description: 'Durable high-speed Type-C charging and data cable.' },
       { id: 'rm_sample_4', name: 'Men Casual Linen Shirt', price: 3450, category: 'Fashion', shop: 'RM Fashion', emoji: '👕', image: '', description: 'Premium breathable cotton-linen shirt.' },
       { id: 'rm_sample_5', name: 'Akkaraipattu Red Raw Rice (5kg)', price: 1150, category: 'Groceries', shop: 'RM Super Mart', emoji: '🌾', image: '', description: 'Clean locally milled fresh rice pack.' },
       { id: 'rm_sample_6', name: 'Crispy Chicken Burger Combo', price: 1490, category: 'Food', shop: 'RM Kitchen', emoji: '🍔', image: '', description: 'Hot spicy chicken burger with fries.' },
@@ -466,8 +466,8 @@
     async function syncFromSupabase() {
       setCloudStatus(true, '⏳ Syncing with Supabase Cloud...');
       try {
-        const resProd = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=created_at.desc`, { headers: SB_HEADERS });
-        if (!resProd.ok) throw new Error('Products fetch failed');
+        const resProd = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=id.desc`, { headers: SB_HEADERS });
+        if (!resProd.ok) throw new Error('Products fetch failed: ' + resProd.status);
         const cloudProducts = await resProd.json();
 
         if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
@@ -475,14 +475,16 @@
           localStorage.setItem('rm_sb_items', JSON.stringify(items));
         }
 
-        const resOrd = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*&order=created_at.desc`, { headers: SB_HEADERS });
-        if (resOrd.ok) {
-          const cloudOrders = await resOrd.json();
-          if (Array.isArray(cloudOrders)) {
-            orders = cloudOrders;
-            localStorage.setItem('rm_sb_orders', JSON.stringify(orders));
+        try {
+          const resOrd = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*&order=id.desc`, { headers: SB_HEADERS });
+          if (resOrd.ok) {
+            const cloudOrders = await resOrd.json();
+            if (Array.isArray(cloudOrders)) {
+              orders = cloudOrders;
+              localStorage.setItem('rm_sb_orders', JSON.stringify(orders));
+            }
           }
-        }
+        } catch (ordErr) {}
 
         setCloudStatus(true, `☁️ Connected to Supabase Cloud (${items.length} Live Items)`);
       } catch (err) {
@@ -769,7 +771,6 @@
       }).join('') || '<p style="font-size:13px; color:#64748b;">No orders yet.</p>';
     }
 
-    // Photo Compression from Phone Storage
     function onPhotoPick(e) {
       const file = e.target.files[0];
       if (!file) return;
