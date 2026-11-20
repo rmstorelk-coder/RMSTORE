@@ -466,7 +466,8 @@
     async function syncFromSupabase() {
       setCloudStatus(true, '⏳ Syncing with Supabase Cloud...');
       try {
-        const resProd = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=id.desc`, { headers: SB_HEADERS });
+        const resProd = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers: SB_HEADERS });
+ SB_HEADERS });
         if (!resProd.ok) throw new Error('Products fetch failed: ' + resProd.status);
         const cloudProducts = await resProd.json();
 
