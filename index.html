@@ -175,7 +175,6 @@
 </head>
 <body>
 
-  <!-- Header -->
   <header class="header">
     <div style="display:flex; align-items:center; gap:10px;">
       <button onclick="toggleMobileMenu()" class="btn btn-dark" style="border:1px solid #334155;" aria-label="Menu">☰</button>
@@ -197,7 +196,6 @@
   </header>
 
   <div class="layout">
-    <!-- Sidebar -->
     <aside id="sidebarMenu" class="sidebar">
       <div>
         <div class="sidebar-title">Navigation</div>
@@ -219,15 +217,12 @@
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="content">
-      <!-- Cloud Connection Status -->
       <div id="cloudStatusBar" class="sync-bar">
         <span id="cloudStatusText">☁️ Connecting to Supabase Cloud Database...</span>
         <button onclick="syncFromSupabase()" class="btn btn-outline" style="padding:4px 10px; font-size:11px;">↻ Refresh</button>
       </div>
 
-      <!-- HOME SECTION -->
       <section id="sec-home">
         <div class="hero">
           <span class="hero-tag">RAASITH MOBILE SPECIAL • NOV 21 & 22</span>
@@ -263,7 +258,6 @@
         <div class="grid" id="productGrid"></div>
       </section>
 
-      <!-- PROMO SECTION -->
       <section id="sec-promo" class="hidden">
         <div class="panel" style="background:linear-gradient(135deg,#020617,#1e1b4b); color:#fff;">
           <span class="hero-tag">SATURDAY & SUNDAY • NOV 21, 22</span>
@@ -278,7 +272,6 @@
         </div>
       </section>
 
-      <!-- ORDERS SECTION -->
       <section id="sec-orders" class="hidden">
         <div class="panel">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -289,7 +282,6 @@
         </div>
       </section>
 
-      <!-- ADMIN SECTION -->
       <section id="sec-admin" class="hidden">
         <div class="panel">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -339,7 +331,6 @@
     </main>
   </div>
 
-  <!-- Mobile Bottom Bar -->
   <nav class="mobile-bar">
     <button onclick="toggleMobileMenu()"><span>☰</span>Menu</button>
     <button onclick="showSection('home')"><span>🏠</span>Home</button>
@@ -348,7 +339,6 @@
     <button onclick="showSection('admin')"><span>➕</span>Admin</button>
   </nav>
 
-  <!-- Item Details Modal -->
   <div id="itemModal" class="modal-bg hidden" onclick="if(event.target===this) closeItemModal()">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -367,7 +357,6 @@
     </div>
   </div>
 
-  <!-- Cart Drawer -->
   <div id="cartDrawer" class="drawer hidden" onclick="if(event.target===this) closeCart()">
     <div class="drawer-box">
       <div>
@@ -467,7 +456,6 @@
       setCloudStatus(true, '⏳ Syncing with Supabase Cloud...');
       try {
         const resProd = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers: SB_HEADERS });
- SB_HEADERS });
         if (!resProd.ok) throw new Error('Products fetch failed: ' + resProd.status);
         const cloudProducts = await resProd.json();
 
@@ -477,7 +465,7 @@
         }
 
         try {
-          const resOrd = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*&order=id.desc`, { headers: SB_HEADERS });
+          const resOrd = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*`, { headers: SB_HEADERS });
           if (resOrd.ok) {
             const cloudOrders = await resOrd.json();
             if (Array.isArray(cloudOrders)) {
@@ -489,7 +477,7 @@
 
         setCloudStatus(true, `☁️ Connected to Supabase Cloud (${items.length} Live Items)`);
       } catch (err) {
-        setCloudStatus(false, '⚠️ Offline / Local Cache Mode — Check internet to sync cloud');
+        setCloudStatus(false, '⚠️ Offline / Local Cache Mode — ' + (err.message || 'Check internet'));
       }
       renderCats();
       renderShopDropdown();
@@ -929,7 +917,6 @@
       `).join('');
     }
 
-    // Boot
     renderCats();
     renderShopDropdown();
     renderProducts();
