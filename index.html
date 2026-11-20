@@ -1,1 +1,939 @@
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzeXhxaXhweW5mZndseWpzYnJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNDUyNTUsImV4cCI6MjExMDcyMTI1NX0.EKY4cqOsSDehWfNbFMDg8Y8wFrJi_aosA58jCvEEaDE
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RM STORE — All-in-One Smart Shopping Hub</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+      padding-bottom: 70px;
+    }
+    .header {
+      position: sticky; top: 0; z-index: 40;
+      background: #020617; color: #fff;
+      padding: 12px 16px; border-bottom: 1px solid #1e293b;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .brand-wrap { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .brand-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, #fbbf24, #f97316, #ef4444);
+      color: #020617; font-weight: 900; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand {
+      font-weight: 900; font-size: 20px; letter-spacing: 1.5px;
+      background: linear-gradient(90deg, #fbbf24, #fb923c);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      display: block; line-height: 1.1;
+    }
+    .brand-sub { font-size: 11px; color: #94a3b8; display: block; font-weight: 500; }
+    .search-box {
+      flex: 1; min-width: 180px; max-width: 380px;
+      padding: 9px 12px; border-radius: 10px; border: 1px solid #334155;
+      background: #0f172a; color: #fff; font-size: 13px;
+    }
+    .search-box:focus { outline: none; border-color: #f97316; }
+    .btn {
+      padding: 8px 14px; border-radius: 10px; border: none; cursor: pointer;
+      font-weight: 700; font-size: 12px; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      transition: transform 0.1s, opacity 0.15s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-orange { background: linear-gradient(135deg, #f97316, #fbbf24); color: #020617; }
+    .btn-green { background: #16a34a; color: #fff; }
+    .btn-cyan { background: #0284c7; color: #fff; }
+    .btn-red { background: #dc2626; color: #fff; }
+    .btn-dark { background: #0f172a; color: #fff; }
+    .btn-outline { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; }
+
+    .layout { display: flex; max-width: 1280px; margin: 0 auto; min-height: calc(100vh - 64px); }
+    .sidebar {
+      width: 250px; background: #020617; color: #e2e8f0;
+      padding: 16px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;
+      border-right: 1px solid #1e293b;
+    }
+    .sidebar-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748b; font-weight: 800; margin-bottom: 6px; }
+    .nav-item {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; text-align: left; padding: 9px 11px;
+      border-radius: 10px; background: transparent; color: #cbd5e1; border: 1px solid transparent;
+      cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 4px;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: rgba(249, 115, 22, 0.18); color: #fb923c; border-color: rgba(249, 115, 22, 0.4);
+    }
+    .badge-count { font-size: 10px; background: #1e293b; color: #94a3b8; padding: 2px 7px; border-radius: 999px; }
+
+    .content { flex: 1; padding: 16px; min-width: 0; }
+    .sync-bar {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+      background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;
+      padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px;
+    }
+    .sync-bar.offline { background: #fef3c7; border-color: #fde68a; color: #92400e; }
+
+    .hero {
+      background: linear-gradient(135deg, #020617, #172554, #0f172a); color: #fff;
+      padding: 20px; border-radius: 18px; margin-bottom: 16px; border: 1px solid #1e293b;
+    }
+    .hero-tag {
+      display: inline-block; background: rgba(249, 115, 22, 0.2); border: 1px solid rgba(249, 115, 22, 0.5);
+      color: #fdba74; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px;
+    }
+    .hero h2 { font-size: 20px; margin: 8px 0; color: #fbbf24; line-height: 1.3; }
+
+    .pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; }
+    .pill {
+      padding: 7px 14px; border-radius: 999px; border: 1px solid #cbd5e1;
+      background: #fff; color: #334155; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+    }
+    .pill.selected {
+      background: linear-gradient(135deg, #0284c7, #f97316); color: #fff; border-color: transparent;
+      box-shadow: 0 3px 10px rgba(249, 115, 22, 0.3);
+    }
+
+    .toolbar {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+      background: #fff; padding: 10px 14px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 14px;
+    }
+    .toolbar select {
+      padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; font-weight: 700; background: #f8fafc;
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 12px; }
+    .card {
+      background: #fff; border: 2px solid #e2e8f0; border-radius: 16px;
+      padding: 12px; display: flex; flex-direction: column; justify-content: space-between;
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .card:hover { border-color: #fdba74; }
+    .card.selected {
+      border-color: #f97316;
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      box-shadow: 0 8px 20px -4px rgba(249, 115, 22, 0.25);
+      transform: translateY(-2px);
+    }
+    .card-thumb {
+      height: 120px; background: #f1f5f9; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 8px; font-size: 42px;
+      position: relative;
+    }
+    .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .selected-badge {
+      position: absolute; top: 6px; right: 6px; background: #f97316; color: #fff;
+      font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 6px;
+    }
+    .price { font-weight: 900; color: #ea580c; font-size: 15px; margin-top: 6px; }
+
+    .panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13px; font-family: inherit;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #f97316; }
+
+    .hidden { display: none !important; }
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(2, 6, 23, 0.75);
+      z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-box {
+      background: #fff; border-radius: 20px; max-width: 440px; width: 100%;
+      padding: 18px; max-height: 90vh; overflow-y: auto;
+    }
+    .drawer {
+      position: fixed; inset: 0; background: rgba(2, 6, 23, 0.75);
+      z-index: 50; display: flex; justify-content: flex-end;
+    }
+    .drawer-box {
+      width: 100%; max-width: 410px; background: #fff; height: 100%;
+      padding: 16px; overflow-y: auto; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .mobile-bar {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+      background: #fff; border-top: 1px solid #e2e8f0; padding: 6px 4px;
+      justify-content: space-around;
+    }
+    .mobile-bar button {
+      background: none; border: none; font-size: 11px; font-weight: 700; color: #475569;
+      display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .sidebar.open { display: flex; position: fixed; top: 60px; left: 0; bottom: 60px; z-index: 45; width: 250px; overflow-y: auto; }
+      .mobile-bar { display: flex; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button onclick="toggleMobileMenu()" class="btn btn-dark" style="border:1px solid #334155;" aria-label="Menu">☰</button>
+      <div class="brand-wrap" onclick="showSection('home')">
+        <div class="brand-icon">RM</div>
+        <div>
+          <span class="brand">RM STORE</span>
+          <span class="brand-sub">All-in-One Smart Shopping Hub</span>
+        </div>
+      </div>
+    </div>
+
+    <input id="searchInput" class="search-box" type="text" oninput="renderProducts()" placeholder="Search mobiles, accessories, display parts, fashion..." />
+
+    <div style="display:flex; gap:8px; align-items:center;">
+      <a href="tel:0775496969" class="btn btn-dark" style="border:1px solid #334155; color:#38bdf8;">📞 0775496969</a>
+      <button onclick="openCart()" class="btn btn-orange">🛒 Cart (<span id="cartCount">0</span>)</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside id="sidebarMenu" class="sidebar">
+      <div>
+        <div class="sidebar-title">Navigation</div>
+        <button class="nav-item active" id="nav-home" onclick="showSection('home')"><span>🏠 All Products</span></button>
+        <button class="nav-item" id="nav-promo" onclick="showSection('promo')"><span>🔥 Weekend Promo</span><span class="badge-count" style="background:#dc2626;color:#fff;">NOV 21-22</span></button>
+        <button class="nav-item" id="nav-orders" onclick="showSection('orders')"><span>📦 Orders (Cloud)</span></button>
+        <button class="nav-item" id="nav-admin" onclick="showSection('admin')"><span>🛠️ Shop Admin</span></button>
+      </div>
+
+      <div>
+        <div class="sidebar-title">Categories</div>
+        <div id="sidebarCats"></div>
+      </div>
+
+      <div style="margin-top:auto; background:#0f172a; border:1px solid #1e293b; border-radius:12px; padding:12px;">
+        <div style="font-size:12px; font-weight:800; color:#34d399;">Akkaraipattu Support</div>
+        <div style="font-size:11px; color:#94a3b8; margin:3px 0 8px;">Raasith Mobile • Fast Order & Display Booking</div>
+        <a href="https://wa.me/94775496969?text=Hello%20RM%20STORE,%20I%20need%20help!" target="_blank" class="btn btn-green" style="width:100%;">WhatsApp: 0775496969</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Cloud Connection Status -->
+      <div id="cloudStatusBar" class="sync-bar">
+        <span id="cloudStatusText">☁️ Connecting to Supabase Cloud Database...</span>
+        <button onclick="syncFromSupabase()" class="btn btn-outline" style="padding:4px 10px; font-size:11px;">↻ Refresh</button>
+      </div>
+
+      <!-- HOME SECTION -->
+      <section id="sec-home">
+        <div class="hero">
+          <span class="hero-tag">RAASITH MOBILE SPECIAL • NOV 21 & 22</span>
+          <h2>Display Change Pannravangalukku High Quality Cable & Tempered FREE!</h2>
+          <p style="font-size:13px; color:#e2e8f0; margin-bottom:12px;">
+            Mobiles, Mobile Accessories, Mobile Repairing Parts, Electronic Parts, Fashion, Groceries, Food & Tools across Akkaraipattu.
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <a href="https://wa.me/94775496969?text=Hello%20Raasith%20Mobile%20/%20RM%20STORE,%20I%20want%20to%20book%20the%20Nov%2021-22%20Display%20Offer!" target="_blank" class="btn btn-green">Book via WhatsApp (0775496969)</a>
+            <button onclick="showSection('promo')" class="btn btn-orange">View Offer Details</button>
+          </div>
+        </div>
+
+        <div class="pills" id="catPills"></div>
+
+        <div class="toolbar">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:12px; font-weight:700; color:#64748b;">Store:</span>
+            <select id="shopFilter" onchange="renderProducts()">
+              <option value="All">All Stores</option>
+            </select>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:12px; font-weight:700; color:#64748b;">Sort:</span>
+            <select id="sortFilter" onchange="renderProducts()">
+              <option value="new">Latest</option>
+              <option value="low">Price: Low to High</option>
+              <option value="high">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid" id="productGrid"></div>
+      </section>
+
+      <!-- PROMO SECTION -->
+      <section id="sec-promo" class="hidden">
+        <div class="panel" style="background:linear-gradient(135deg,#020617,#1e1b4b); color:#fff;">
+          <span class="hero-tag">SATURDAY & SUNDAY • NOV 21, 22</span>
+          <h2 style="font-size:22px; color:#fbbf24; margin:10px 0;">Raasith Mobile — Display Change Mega Offer</h2>
+          <p style="font-size:14px; color:#e2e8f0; margin-bottom:14px;">
+            Replace your damaged smartphone display at <strong>Raasith Mobile, Akkaraipattu</strong> on Nov 21 & 22 and receive a <strong>High Quality Fast-Charging Cable + Tempered Glass FREE</strong>!
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <a href="https://wa.me/94775496969?text=Assalamu%20Alaikum%20Raasith%20Mobile!%20I%20want%20to%20book%20the%20Nov%2021-22%20Display%20Change%20Offer.%20Phone%20Model:%20" target="_blank" class="btn btn-green">Book Now on WhatsApp (0775496969)</a>
+            <button onclick="setCat('Mobile Repairing Parts'); showSection('home')" class="btn btn-orange">Browse Display Parts</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ORDERS SECTION -->
+      <section id="sec-orders" class="hidden">
+        <div class="panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h2 style="font-size:18px;">Cloud Orders (Supabase Live)</h2>
+            <button onclick="syncFromSupabase()" class="btn btn-outline">↻ Refresh Orders</button>
+          </div>
+          <div id="ordersBox">Loading orders...</div>
+        </div>
+      </section>
+
+      <!-- ADMIN SECTION -->
+      <section id="sec-admin" class="hidden">
+        <div class="panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h2 id="adminTitle" style="font-size:18px;">Shop Admin — Add / Edit Item (Cloud Sync)</h2>
+            <button id="cancelEditBtn" onclick="resetForm()" class="btn btn-outline hidden">Cancel Edit</button>
+          </div>
+          <form onsubmit="saveProduct(event)">
+            <input type="hidden" id="editId" />
+            <div class="field"><label>Product Name *</label><input id="pName" required placeholder="e.g. Samsung A54 OLED Display" /></div>
+            <div class="field"><label>Price (Rs.) *</label><input id="pPrice" type="number" required min="1" placeholder="e.g. 12500" /></div>
+            <div class="field">
+              <label>Category *</label>
+              <select id="pCat">
+                <option>Mobiles</option>
+                <option>Mobile Accessories</option>
+                <option>Mobile Repairing Parts</option>
+                <option>Electronic Parts</option>
+                <option>Fashion</option>
+                <option>Groceries</option>
+                <option>Food</option>
+                <option>Tools</option>
+              </select>
+            </div>
+            <div class="field"><label>Store / Shop Name *</label><input id="pShop" required value="Raasith Mobile" /></div>
+            <div class="field">
+              <label>Select Photo from Phone Gallery / Camera</label>
+              <input id="pFile" type="file" accept="image/*" onchange="onPhotoPick(event)" />
+              <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+                <img id="pPreview" src="" alt="Preview" style="height:80px; width:80px; object-fit:cover; border-radius:10px; border:1px solid #cbd5e1; display:none;" />
+                <button type="button" id="removePhotoBtn" onclick="clearPhoto()" class="btn btn-red hidden" style="padding:5px 10px; font-size:11px;">Remove Photo</button>
+              </div>
+            </div>
+            <div class="field"><label>Emoji Icon (if no photo)</label><input id="pEmoji" value="📱" maxlength="4" /></div>
+            <div class="field"><label>Specifications / Offer Details</label><textarea id="pDesc" rows="3" placeholder="Warranty, compatibility, or free gift details..."></textarea></div>
+            <button type="submit" id="pSubmitBtn" class="btn btn-orange" style="width:100%; padding:12px; font-size:14px;">Save Product to Cloud</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="font-size:16px;">Live Store Items (<span id="adminCount">0</span>)</h3>
+            <button onclick="seedDefaultProducts()" class="btn btn-outline" style="font-size:11px;">+ Add Sample Items</button>
+          </div>
+          <div id="adminList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Bar -->
+  <nav class="mobile-bar">
+    <button onclick="toggleMobileMenu()"><span>☰</span>Menu</button>
+    <button onclick="showSection('home')"><span>🏠</span>Home</button>
+    <button onclick="showSection('promo')"><span>🔥</span>Offer</button>
+    <button onclick="showSection('orders')"><span>📦</span>Orders</button>
+    <button onclick="showSection('admin')"><span>➕</span>Admin</button>
+  </nav>
+
+  <!-- Item Details Modal -->
+  <div id="itemModal" class="modal-bg hidden" onclick="if(event.target===this) closeItemModal()">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span id="mCat" style="font-size:11px; font-weight:800; color:#0284c7; text-transform:uppercase;"></span>
+        <button onclick="closeItemModal()" class="btn btn-outline" style="padding:4px 10px;">✕</button>
+      </div>
+      <div id="mThumb" style="height:190px; background:#f1f5f9; border-radius:14px; display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:64px; margin-bottom:12px;"></div>
+      <div id="mShop" style="font-size:12px; font-weight:700; color:#64748b;"></div>
+      <h3 id="mTitle" style="font-size:18px; margin:4px 0;"></h3>
+      <div id="mPrice" style="font-size:20px; font-weight:900; color:#ea580c; margin-bottom:8px;"></div>
+      <p id="mDesc" style="font-size:13px; color:#475569; margin-bottom:14px;"></p>
+      <div style="display:flex; gap:8px;">
+        <button id="mAddBtn" class="btn btn-orange" style="flex:1; padding:11px;">+ Add to Cart</button>
+        <a id="mWaBtn" href="#" target="_blank" class="btn btn-green" style="padding:11px;">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer -->
+  <div id="cartDrawer" class="drawer hidden" onclick="if(event.target===this) closeCart()">
+    <div class="drawer-box">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #e2e8f0; padding-bottom:10px;">
+          <h3 style="font-size:17px;">Your Shopping Cart</h3>
+          <button onclick="closeCart()" class="btn btn-outline">✕</button>
+        </div>
+        <div id="cartItems"></div>
+
+        <div class="field" style="margin-top:12px;">
+          <label>Promo Code (RM100 or WEEKEND)</label>
+          <div style="display:flex; gap:6px;">
+            <input id="promoInput" placeholder="Enter code" style="text-transform:uppercase;" />
+            <button onclick="applyPromo()" class="btn btn-dark">Apply</button>
+          </div>
+          <div id="promoMsg" style="font-size:11px; margin-top:4px; font-weight:700;"></div>
+        </div>
+
+        <div class="field">
+          <label>Delivery Area</label>
+          <select id="delArea" onchange="renderCart()">
+            <option value="0">Shop Pickup — Raasith Mobile, Akkaraipattu (Free)</option>
+            <option value="150">Akkaraipattu Town Limits (Rs. 150)</option>
+            <option value="250">Addalaichenai / Oluvil (Rs. 250)</option>
+            <option value="300">Nintavur / Sammanthurai (Rs. 300)</option>
+            <option value="400">Kalmunai / Sainthamaruthu (Rs. 400)</option>
+          </select>
+        </div>
+
+        <div class="field"><label>Your Name *</label><input id="cName" placeholder="Full Name" /></div>
+        <div class="field"><label>Phone / WhatsApp *</label><input id="cPhone" type="tel" placeholder="07XXXXXXXX" /></div>
+        <div class="field"><label>Delivery Address *</label><input id="cAddr" placeholder="Street / Landmark" /></div>
+        <div class="field">
+          <label>Payment Method</label>
+          <select id="cPay">
+            <option value="WhatsApp Order">WhatsApp Order (0775496969)</option>
+            <option value="Cash on Delivery (COD)">Cash on Delivery (COD)</option>
+            <option value="Online Bank / Card">Online Bank / Card</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #e2e8f0; padding-top:12px; margin-top:10px;">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#64748b;"><span>Subtotal:</span><span id="subTotal">Rs. 0</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#64748b;"><span>Delivery:</span><span id="delTotal">Rs. 0</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#16a34a;"><span>Discount:</span><span id="discTotal">- Rs. 0</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:17px; font-weight:900; color:#0f172a; margin:8px 0;">
+          <span>Total:</span><span id="grandTotal" style="color:#ea580c;">Rs. 0</span>
+        </div>
+        <button id="placeOrderBtn" onclick="checkoutOrder()" class="btn btn-green" style="width:100%; padding:13px; font-size:14px;">
+          Confirm & Send Order
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://xsyxqixpynffwlyjsbrp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzeXhxaXhweW5mZndseWpzYnJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNDUyNTUsImV4cCI6MjExMDcyMTI1NX0.EKY4cqOsSDehWfNbFMDg8Y8wFrJi_aosA58jCvEEaDE';
+
+    const SB_HEADERS = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    };
+
+    const CATS = ['All', 'Mobiles', 'Mobile Accessories', 'Mobile Repairing Parts', 'Electronic Parts', 'Fashion', 'Groceries', 'Food', 'Tools'];
+    const SAMPLE_ITEMS = [
+      { id: 'rm_sample_1', name: 'Display Change + Free Cable & Tempered', price: 11500, category: 'Mobile Repairing Parts', shop: 'Raasith Mobile', emoji: '📱', image: '', description: 'Nov 21-22 Weekend Offer at Raasith Mobile, Akkaraipattu. Free High Quality Cable & Tempered Glass.' },
+      { id: 'rm_sample_2', name: 'Samsung Galaxy A55 5G (8GB/256GB)', price: 118500, category: 'Mobiles', shop: 'Raasith Mobile', emoji: '📲', image: '', description: 'Brand new sealed pack with 1 year company warranty.' },
+      { id: 'rm_sample_3', name: '65W Braided Fast Charging Cable', price: 1250, category: 'Mobile Accessories', shop: 'Raasith Mobile', emoji: '🔌', image: '', description: 'Durable high-speed Type-C charging and data cable.' },
+      { id: 'rm_sample_4', name: 'Men Casual Linen Shirt', price: 3450, category: 'Fashion', shop: 'RM Fashion', emoji: '👕', image: '', description: 'Premium breathable cotton-linen shirt.' },
+      { id: 'rm_sample_5', name: 'Akkaraipattu Red Raw Rice (5kg)', price: 1150, category: 'Groceries', shop: 'RM Super Mart', emoji: '🌾', image: '', description: 'Clean locally milled fresh rice pack.' },
+      { id: 'rm_sample_6', name: 'Crispy Chicken Burger Combo', price: 1490, category: 'Food', shop: 'RM Kitchen', emoji: '🍔', image: '', description: 'Hot spicy chicken burger with fries.' },
+      { id: 'rm_sample_7', name: 'Precision Mobile Repair Tool Kit', price: 4500, category: 'Tools', shop: 'RM Tech Tools', emoji: '🛠️', image: '', description: 'Complete magnetic screwdriver & opener set.' }
+    ];
+
+    let items = JSON.parse(localStorage.getItem('rm_sb_items') || 'null') || [...SAMPLE_ITEMS];
+    let orders = JSON.parse(localStorage.getItem('rm_sb_orders') || '[]');
+    let cart = JSON.parse(localStorage.getItem('rm_sb_cart') || '[]');
+    let activeCat = 'All';
+    let selectedId = null;
+    let photoData = '';
+    let discountAmount = 0;
+
+    const rs = n => 'Rs. ' + (Number(n) || 0).toLocaleString();
+
+    function setCloudStatus(ok, text) {
+      const bar = document.getElementById('cloudStatusBar');
+      const txt = document.getElementById('cloudStatusText');
+      txt.textContent = text;
+      bar.classList.toggle('offline', !ok);
+    }
+
+    async function syncFromSupabase() {
+      setCloudStatus(true, '⏳ Syncing with Supabase Cloud...');
+      try {
+        const resProd = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=id.desc`, { headers: SB_HEADERS });
+        if (!resProd.ok) throw new Error('Products fetch failed: ' + resProd.status);
+        const cloudProducts = await resProd.json();
+
+        if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+          items = cloudProducts;
+          localStorage.setItem('rm_sb_items', JSON.stringify(items));
+        }
+
+        try {
+          const resOrd = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*&order=id.desc`, { headers: SB_HEADERS });
+          if (resOrd.ok) {
+            const cloudOrders = await resOrd.json();
+            if (Array.isArray(cloudOrders)) {
+              orders = cloudOrders;
+              localStorage.setItem('rm_sb_orders', JSON.stringify(orders));
+            }
+          }
+        } catch (ordErr) {}
+
+        setCloudStatus(true, `☁️ Connected to Supabase Cloud (${items.length} Live Items)`);
+      } catch (err) {
+        setCloudStatus(false, '⚠️ Offline / Local Cache Mode — Check internet to sync cloud');
+      }
+      renderCats();
+      renderShopDropdown();
+      renderProducts();
+      renderOrders();
+      renderAdmin();
+    }
+
+    async function seedDefaultProducts() {
+      setCloudStatus(true, '⏳ Uploading sample items to Supabase...');
+      try {
+        for (const item of SAMPLE_ITEMS) {
+          await fetch(`${SUPABASE_URL}/rest/v1/products`, {
+            method: 'POST',
+            headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
+            body: JSON.stringify(item)
+          });
+        }
+        await syncFromSupabase();
+        alert('Sample items added to Supabase Cloud!');
+      } catch (e) {
+        alert('Could not upload sample items. Check connection.');
+      }
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('sidebarMenu').classList.toggle('open');
+    }
+
+    function showSection(sec) {
+      document.getElementById('sidebarMenu').classList.remove('open');
+      ['home', 'promo', 'orders', 'admin'].forEach(s => {
+        document.getElementById('sec-' + s).classList.toggle('hidden', s !== sec);
+        const btn = document.getElementById('nav-' + s);
+        if (btn) btn.classList.toggle('active', s === sec);
+      });
+      if (sec === 'orders') renderOrders();
+      if (sec === 'admin') renderAdmin();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderCats() {
+      document.getElementById('catPills').innerHTML = CATS.map(c =>
+        `<button class="pill ${activeCat === c ? 'selected' : ''}" onclick="setCat('${c}')">${c}</button>`
+      ).join('');
+
+      document.getElementById('sidebarCats').innerHTML = CATS.map(c => {
+        const cnt = c === 'All' ? items.length : items.filter(x => x.category === c).length;
+        return `<button class="nav-item ${activeCat === c ? 'active' : ''}" onclick="setCat('${c}'); showSection('home')">
+          <span>${c}</span><span class="badge-count">${cnt}</span>
+        </button>`;
+      }).join('');
+    }
+
+    function renderShopDropdown() {
+      const shops = ['All', ...new Set(items.map(x => x.shop).filter(Boolean))];
+      const sel = document.getElementById('shopFilter');
+      const cur = sel.value;
+      sel.innerHTML = shops.map(s => `<option value="${s}" ${cur === s ? 'selected' : ''}>${s === 'All' ? 'All Stores' : s}</option>`).join('');
+    }
+
+    function setCat(c) {
+      activeCat = c;
+      renderCats();
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      const shopVal = document.getElementById('shopFilter').value;
+      const sortVal = document.getElementById('sortFilter').value;
+
+      let list = items.filter(p => {
+        const matchCat = activeCat === 'All' || p.category === activeCat;
+        const matchShop = shopVal === 'All' || p.shop === shopVal;
+        const matchQ = !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) ||
+          (p.shop && p.shop.toLowerCase().includes(q)) || (p.description && p.description.toLowerCase().includes(q));
+        return matchCat && matchShop && matchQ;
+      });
+
+      if (sortVal === 'low') list.sort((a, b) => Number(a.price) - Number(b.price));
+      if (sortVal === 'high') list.sort((a, b) => Number(b.price) - Number(a.price));
+
+      document.getElementById('productGrid').innerHTML = list.map(p => {
+        const isSel = selectedId === p.id;
+        return `
+          <div class="card ${isSel ? 'selected' : ''}" onclick="selectAndView('${p.id}')">
+            <div>
+              <div class="card-thumb">
+                ${p.image ? `<img src="${p.image}" alt="" />` : (p.emoji || '📦')}
+                ${isSel ? '<span class="selected-badge">Selected</span>' : ''}
+              </div>
+              <div style="font-size:10px; font-weight:800; color:#0284c7;">${p.category} • ${p.shop}</div>
+              <div style="font-weight:700; font-size:13px; margin-top:2px;">${p.name}</div>
+            </div>
+            <div>
+              <div class="price">${rs(p.price)}</div>
+              <button class="btn btn-dark" style="width:100%; margin-top:8px;" onclick="event.stopPropagation(); selectedId='${p.id}'; renderProducts(); addCart('${p.id}')">+ Add to Cart</button>
+            </div>
+          </div>
+        `;
+      }).join('') || '<p style="font-size:13px; color:#64748b;">No items found.</p>';
+    }
+
+    function selectAndView(id) {
+      selectedId = id;
+      renderProducts();
+      const p = items.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('mCat').textContent = p.category;
+      document.getElementById('mShop').textContent = 'Store: ' + p.shop;
+      document.getElementById('mTitle').textContent = p.name;
+      document.getElementById('mPrice').textContent = rs(p.price);
+      document.getElementById('mDesc').textContent = p.description || 'Available at RM STORE, Akkaraipattu.';
+      document.getElementById('mThumb').innerHTML = p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;" />` : (p.emoji || '📦');
+      document.getElementById('mAddBtn').onclick = () => { addCart(p.id); closeItemModal(); };
+      document.getElementById('mWaBtn').href = `https://wa.me/94775496969?text=${encodeURIComponent('Hello RM STORE, I want to order: ' + p.name + ' (' + rs(p.price) + ')')}`;
+      document.getElementById('itemModal').classList.remove('hidden');
+    }
+
+    function closeItemModal() {
+      document.getElementById('itemModal').classList.add('hidden');
+    }
+
+    function addCart(id) {
+      const found = cart.find(x => x.id === id);
+      if (found) found.qty += 1; else cart.push({ id, qty: 1 });
+      localStorage.setItem('rm_sb_cart', JSON.stringify(cart));
+      updateCartBadge();
+    }
+
+    function changeQty(id, delta) {
+      const idx = cart.findIndex(x => x.id === id);
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      localStorage.setItem('rm_sb_cart', JSON.stringify(cart));
+      updateCartBadge();
+      renderCart();
+    }
+
+    function updateCartBadge() {
+      document.getElementById('cartCount').textContent = cart.reduce((s, x) => s + x.qty, 0);
+    }
+
+    function openCart() {
+      const savedCust = JSON.parse(localStorage.getItem('rm_sb_cust') || '{}');
+      if (savedCust.name) document.getElementById('cName').value = savedCust.name;
+      if (savedCust.phone) document.getElementById('cPhone').value = savedCust.phone;
+      if (savedCust.addr) document.getElementById('cAddr').value = savedCust.addr;
+      document.getElementById('cartDrawer').classList.remove('hidden');
+      renderCart();
+    }
+
+    function closeCart() {
+      document.getElementById('cartDrawer').classList.add('hidden');
+    }
+
+    function applyPromo() {
+      const code = document.getElementById('promoInput').value.trim().toUpperCase();
+      const msg = document.getElementById('promoMsg');
+      if (code === 'RM100') {
+        discountAmount = 100;
+        msg.textContent = 'RM100 applied! Rs. 100 OFF';
+        msg.style.color = '#16a34a';
+      } else if (code === 'WEEKEND') {
+        discountAmount = 250;
+        msg.textContent = 'WEEKEND applied! Rs. 250 OFF';
+        msg.style.color = '#16a34a';
+      } else {
+        discountAmount = 0;
+        msg.textContent = 'Invalid code. Try RM100 or WEEKEND';
+        msg.style.color = '#dc2626';
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      let sub = 0;
+      document.getElementById('cartItems').innerHTML = cart.map(c => {
+        const p = items.find(i => i.id === c.id);
+        if (!p) return '';
+        sub += Number(p.price) * c.qty;
+        return `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #e2e8f0; font-size:12px;">
+          <div style="flex:1; padding-right:8px;"><strong>${p.name}</strong><br><span style="color:#64748b;">${rs(p.price)} each</span></div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button class="btn btn-outline" style="padding:3px 8px;" onclick="changeQty('${p.id}', -1)">-</button>
+            <strong>${c.qty}</strong>
+            <button class="btn btn-dark" style="padding:3px 8px;" onclick="changeQty('${p.id}', 1)">+</button>
+          </div>
+        </div>`;
+      }).join('') || '<p style="font-size:13px; color:#64748b;">Your cart is empty.</p>';
+
+      const del = Number(document.getElementById('delArea').value) || 0;
+      const disc = Math.min(discountAmount, sub);
+      const grand = Math.max(0, sub + del - disc);
+
+      document.getElementById('subTotal').textContent = rs(sub);
+      document.getElementById('delTotal').textContent = rs(del);
+      document.getElementById('discTotal').textContent = '- ' + rs(disc);
+      document.getElementById('grandTotal').textContent = rs(grand);
+      return { sub, del, disc, grand };
+    }
+
+    async function checkoutOrder() {
+      if (!cart.length) return alert('Cart is empty!');
+      const name = document.getElementById('cName').value.trim();
+      const phone = document.getElementById('cPhone').value.trim();
+      const addr = document.getElementById('cAddr').value.trim();
+      if (!name || !phone || !addr) return alert('Please enter Name, Phone & Address!');
+
+      localStorage.setItem('rm_sb_cust', JSON.stringify({ name, phone, addr }));
+
+      const areaSel = document.getElementById('delArea');
+      const areaText = areaSel.options[areaSel.selectedIndex].text;
+      const pay = document.getElementById('cPay').value;
+      const totals = renderCart();
+
+      const itemList = cart.map(c => {
+        const p = items.find(i => i.id === c.id);
+        return { name: p.name, shop: p.shop, qty: c.qty, price: Number(p.price) };
+      });
+      const lines = itemList.map(x => `${x.name} (${x.shop}) x${x.qty} = ${rs(x.price * x.qty)}`);
+
+      const orderId = 'RM-' + Date.now().toString().slice(-6);
+      const dbOrder = {
+        id: orderId,
+        customer_name: name,
+        customer_phone: phone,
+        customer_address: addr,
+        delivery_area: areaText,
+        payment_method: pay,
+        items: itemList,
+        total: totals.grand,
+        status: 'Confirmed'
+      };
+
+      const btn = document.getElementById('placeOrderBtn');
+      btn.textContent = 'Saving Order to Cloud...';
+      btn.disabled = true;
+
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+          method: 'POST',
+          headers: SB_HEADERS,
+          body: JSON.stringify(dbOrder)
+        });
+      } catch (e) {}
+
+      orders.unshift({ ...dbOrder, created_at: new Date().toISOString() });
+      localStorage.setItem('rm_sb_orders', JSON.stringify(orders));
+
+      const msg = `*NEW ORDER — RM STORE*\nOrder ID: ${orderId}\nCustomer: ${name}\nPhone: ${phone}\nAddress: ${addr}\nDelivery: ${areaText}\nPayment: ${pay}\n\n*Items:*\n- ${lines.join('\n- ')}\n\n*Total: ${rs(totals.grand)}*`;
+
+      cart = [];
+      localStorage.setItem('rm_sb_cart', '[]');
+      updateCartBadge();
+      btn.textContent = 'Confirm & Send Order';
+      btn.disabled = false;
+      closeCart();
+      showSection('orders');
+      window.open('https://wa.me/94775496969?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    function renderOrders() {
+      document.getElementById('ordersBox').innerHTML = orders.map(o => {
+        const itemsHtml = Array.isArray(o.items)
+          ? o.items.map(i => `${i.name} x${i.qty} (${rs(i.price * i.qty)})`).join(', ')
+          : '';
+        return `
+          <div style="border:1px solid #e2e8f0; border-radius:12px; padding:12px; margin-bottom:10px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px;">
+              <strong>${o.id} • ${o.payment_method || ''}</strong>
+              <span style="color:#ea580c; font-weight:900;">${rs(o.total)}</span>
+            </div>
+            <div style="margin-top:4px; color:#334155;">${itemsHtml}</div>
+            <div style="font-size:11px; color:#64748b; margin-top:4px;">${o.customer_name} (${o.customer_phone}) • ${o.customer_address}</div>
+          </div>
+        `;
+      }).join('') || '<p style="font-size:13px; color:#64748b;">No orders yet.</p>';
+    }
+
+    function onPhotoPick(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const scale = Math.min(1, 500 / Math.max(img.width, img.height));
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          photoData = canvas.toDataURL('image/jpeg', 0.72);
+          const prev = document.getElementById('pPreview');
+          prev.src = photoData;
+          prev.style.display = 'block';
+          document.getElementById('removePhotoBtn').classList.remove('hidden');
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearPhoto() {
+      photoData = '';
+      document.getElementById('pFile').value = '';
+      document.getElementById('pPreview').style.display = 'none';
+      document.getElementById('removePhotoBtn').classList.add('hidden');
+    }
+
+    async function saveProduct(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editId').value;
+      const existing = editId ? items.find(x => x.id === editId) : null;
+      const id = editId || ('prod_' + Date.now());
+
+      const payload = {
+        id,
+        name: document.getElementById('pName').value.trim(),
+        price: Number(document.getElementById('pPrice').value),
+        category: document.getElementById('pCat').value,
+        shop: document.getElementById('pShop').value.trim() || 'Raasith Mobile',
+        emoji: document.getElementById('pEmoji').value.trim() || '📱',
+        description: document.getElementById('pDesc').value.trim(),
+        image: photoData !== '' ? photoData : (existing ? (existing.image || '') : '')
+      };
+
+      const btn = document.getElementById('pSubmitBtn');
+      btn.textContent = 'Saving to Supabase Cloud...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {
+          method: 'POST',
+          headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Save failed');
+        await syncFromSupabase();
+        resetForm();
+        alert(editId ? 'Product updated in Cloud!' : 'Product saved to Cloud!');
+      } catch (err) {
+        if (editId) {
+          items = items.map(x => x.id === editId ? payload : x);
+        } else {
+          items.unshift(payload);
+        }
+        localStorage.setItem('rm_sb_items', JSON.stringify(items));
+        resetForm();
+        renderCats();
+        renderShopDropdown();
+        renderProducts();
+        renderAdmin();
+        alert('Saved locally (will sync when online).');
+      } finally {
+        btn.textContent = 'Save Product to Cloud';
+        btn.disabled = false;
+      }
+    }
+
+    function editItem(id) {
+      const p = items.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('editId').value = p.id;
+      document.getElementById('pName').value = p.name;
+      document.getElementById('pPrice').value = p.price;
+      document.getElementById('pCat').value = p.category;
+      document.getElementById('pShop').value = p.shop;
+      document.getElementById('pEmoji').value = p.emoji || '📱';
+      document.getElementById('pDesc').value = p.description || '';
+      photoData = p.image || '';
+
+      const prev = document.getElementById('pPreview');
+      if (p.image) {
+        prev.src = p.image;
+        prev.style.display = 'block';
+        document.getElementById('removePhotoBtn').classList.remove('hidden');
+      } else {
+        clearPhoto();
+      }
+
+      document.getElementById('adminTitle').textContent = 'Editing: ' + p.name;
+      document.getElementById('pSubmitBtn').textContent = 'Update Product in Cloud';
+      document.getElementById('cancelEditBtn').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function delItem(id) {
+      if (!confirm('Delete this item from RM STORE?')) return;
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${encodeURIComponent(id)}`, {
+          method: 'DELETE',
+          headers: SB_HEADERS
+        });
+      } catch (e) {}
+      items = items.filter(x => x.id !== id);
+      localStorage.setItem('rm_sb_items', JSON.stringify(items));
+      renderCats();
+      renderShopDropdown();
+      renderProducts();
+      renderAdmin();
+    }
+
+    function resetForm() {
+      document.getElementById('editId').value = '';
+      document.getElementById('pName').value = '';
+      document.getElementById('pPrice').value = '';
+      document.getElementById('pShop').value = 'Raasith Mobile';
+      document.getElementById('pEmoji').value = '📱';
+      document.getElementById('pDesc').value = '';
+      clearPhoto();
+      document.getElementById('adminTitle').textContent = 'Shop Admin — Add / Edit Item (Cloud Sync)';
+      document.getElementById('pSubmitBtn').textContent = 'Save Product to Cloud';
+      document.getElementById('cancelEditBtn').classList.add('hidden');
+    }
+
+    function renderAdmin() {
+      document.getElementById('adminCount').textContent = items.length;
+      document.getElementById('adminList').innerHTML = items.map(p => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #e2e8f0; gap:8px; font-size:12px;">
+          <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+            <div style="width:36px; height:36px; border-radius:8px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+              ${p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;" />` : (p.emoji || '📦')}
+            </div>
+            <div style="overflow:hidden; text-overflow:ellipsis;">
+              <strong>${p.name}</strong><br>
+              <span style="color:#64748b;">${p.shop} • ${rs(p.price)}</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px; flex-shrink:0;">
+            <button class="btn btn-cyan" style="padding:5px 10px;" onclick="editItem('${p.id}')">Edit</button>
+            <button class="btn btn-red" style="padding:5px 10px;" onclick="delItem('${p.id}')">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Boot
+    renderCats();
+    renderShopDropdown();
+    renderProducts();
+    updateCartBadge();
+    syncFromSupabase();
+  </script>
+</body>
+</html>
